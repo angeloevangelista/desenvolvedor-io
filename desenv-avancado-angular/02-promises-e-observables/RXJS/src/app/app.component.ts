@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, Observer } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -26,7 +26,11 @@ export class AppComponent implements OnInit {
       if (!!nome.length) {
         subscriber.next(`Olá, ${nome}!`);
 
-        setTimeout(() => subscriber.next(`Ainda por aqui, ${nome}?`), 1000);
+        setTimeout(() => {
+          subscriber.next(`Ainda por aqui, ${nome}?`);
+          subscriber.complete();
+        }, 1000);
+
         return;
       }
 
@@ -39,9 +43,19 @@ export class AppComponent implements OnInit {
     //   .then((response) => console.log(response))
     //   .catch((error) => console.error(error));
 
-    this.minhaObservable("").subscribe(
-      (result) => console.log(result),
-      (error) => console.error(error)
-    );
+    // this.minhaObservable("").subscribe(
+    //   (result) => console.log(result),
+    //   (error) => console.error(error)
+    // );
+
+    const observer: Observer<string> = {
+      next: (value) => console.log("Next:", value),
+      error: (err) => console.error("Error:", err),
+      complete: () => console.log("Complete"),
+    };
+
+    const observable = this.minhaObservable("Angelo");
+
+    observable.subscribe(observer);
   }
 }
