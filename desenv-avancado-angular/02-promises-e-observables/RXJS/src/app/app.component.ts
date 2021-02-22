@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { Observable } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -20,9 +21,27 @@ export class AppComponent implements OnInit {
     });
   }
 
+  minhaObservable(nome: string): Observable<string> {
+    return new Observable((subscriber) => {
+      if (!!nome.length) {
+        subscriber.next(`Olá, ${nome}!`);
+
+        setTimeout(() => subscriber.next(`Ainda por aqui, ${nome}?`), 1000);
+        return;
+      }
+
+      subscriber.error("Opa, preciso saber o seu nome, jovem :/");
+    });
+  }
+
   ngOnInit(): void {
-    this.minhaPromise("Angelão")
-      .then((response) => console.log(response))
-      .catch((error) => console.error(error));
+    // this.minhaPromise("Angelão")
+    //   .then((response) => console.log(response))
+    //   .catch((error) => console.error(error));
+
+    this.minhaObservable("").subscribe(
+      (result) => console.log(result),
+      (error) => console.error(error)
+    );
   }
 }
